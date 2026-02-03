@@ -12,6 +12,8 @@ public class ProductMigrationController : ControllerBase
         _httpClientFactory = httpClientFactory;
     }
 
+
+
     [HttpPost("migrate-to-eduzz")]
     public async Task<IActionResult> MigrateHotmartToEduzz(
         [FromBody] HotmartProduct hotmartData,

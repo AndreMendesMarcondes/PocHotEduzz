@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="../../../../../../../../GIT/Thunders/DevOps/tools/PocHotEduzz/PHE.Api/PHE.Api.csproj" />
-  <Project Path="../../../../../../../../GIT/Thunders/DevOps/tools/PocHotEduzz/PHE.Domain/PHE.Domain.csproj" />
+  <Project Path="PHE.Api/PHE.Api.csproj" />
+  <Project Path="PHE.Domain/PHE.Domain.csproj" />
 </Solution>
