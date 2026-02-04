@@ -36,7 +36,7 @@ else
                     <span class="panel-brand-text">eduzz</span>
                 </div>
                 <h2>Eduzz</h2>
-                <span class="panel-subtitle">Pick a product to preview</span>
+                <span class="panel-subtitle">Selecione um produto</span>
             </header>
 
             @if (eduzzProducts.Count == 0)
@@ -46,7 +46,7 @@ else
             else
             {
                 <label class="product-label" for="eduzz-select">Eduzz products</label>
-                <InputSelect id="eduzz-select" class="product-select" @bind-Value="selectedEduzzId" @onchange="OnEduzzSelected">
+                <InputSelect id="eduzz-select" class="product-select" @bind-Value="selectedEduzzId">
                     <option value="">Select a product...</option>
                     @foreach (var product in eduzzProducts)
                     {
@@ -110,7 +110,7 @@ else
                     <span class="panel-brand-text">hotmart</span>
                 </div>
                 <h2>Hotmart</h2>
-                <span class="panel-subtitle">Pick a product to preview</span>
+                <span class="panel-subtitle">Selecione um produto</span>
             </header>
 
             @if (hotmartProducts.Count == 0)
@@ -120,7 +120,7 @@ else
             else
             {
                 <label class="product-label" for="hotmart-select">Hotmart products</label>
-                <InputSelect id="hotmart-select" class="product-select" @bind-Value="selectedHotmartId" @onchange="OnHotmartSelected">
+                <InputSelect id="hotmart-select" class="product-select" @bind-Value="selectedHotmartId" >
                     <option value="">Select a product...</option>
                     @foreach (var product in hotmartProducts)
                     {
@@ -304,7 +304,7 @@ else
             ProductDetails = new HotmartProduct.ProductDetail
             {
                 Name = name,
-                Description = description,
+                Description = EnsureMinLength(description,200),
                 CoverPhoto = new HotmartProduct.CoverPhoto { Id = 6238587 },
                 Format = new HotmartProduct.Format { Id = "1" }
             },
@@ -324,13 +324,17 @@ else
         };
     }
 
-    private void OnEduzzSelected(ChangeEventArgs args)
+    private static string EnsureMinLength(string value, int minLength)
     {
-        Console.WriteLine($"Eduzz select changed: {args.Value}");
-    }
+        var normalized = value.Trim();
+        if (normalized.Length >= minLength)
+        {
+            return normalized;
+        }
 
-    private void OnHotmartSelected(ChangeEventArgs args)
-    {
-        Console.WriteLine($"Hotmart select changed: {args.Value}");
+        var filler = " ";
+        var remaining = minLength - normalized.Length;
+        var pad = new string('.', Math.Max(remaining - filler.Length, 0));
+        return normalized + filler + pad;
     }
 }

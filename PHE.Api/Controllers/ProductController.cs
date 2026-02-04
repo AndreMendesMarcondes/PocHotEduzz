@@ -13,8 +13,8 @@ namespace PHE.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private static string EduzzToken => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NzAxNjU4OTYsImN1c3RvbWVyX2lkIjozODUyMjgxMiwiYWNjb3VudHNfaWQiOiI5NjE0MDkyNy02NjYyLTRiMmUtODY2MC1iZDUzNWM2MmYyNmEiLCJvcmlnaW5hbF9jdXN0b21lcl9pZCI6Mzg1MjI4MTIsIm9yaWdpbmFsX2N1c3RvbWVyX2FjY291bnRzX2lkIjoiOTYxNDA5MjctNjY2Mi00YjJlLTg2NjAtYmQ1MzVjNjJmMjZhIiwiaXNfc3VwcG9ydCI6ZmFsc2UsInN1cHBvcnRfaWQiOjB9.RdL-nSs_jHaBreBZyxJ8kVV5vE3WkpPb_Xt7CqmHZ6M";
-        private static string HotmartToken => "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJUR1QtNjAxNi1tNFk2d3hVS1Z3UHJ1LUVYTUVjTzk2WEVkZ29GVlY4cWliNWx0VGlqNHhVMVkwelo3QW1ZVkk0WlpaQkl0ck1nLVVvLWhvdC1zc28tN2I2NzQ5N2Y3Yy02NzQ0bSIsInNpZCI6IjZkYzEzMTgzLWE4NGMtNDg1YS04MjJkLWIxYzg2MzA0MjcxYiIsImlzcyI6Imh0dHBzOi8vc3NvLmhvdG1hcnQuY29tL29pZGMiLCJhdWQiOlsiZmI1ZTE4YmEtMjAzZi0xMWVhLTk3OGYtMmU3MjhjZTg4MTI1IiwiOGNlZjM2MWItOTRmOC00Njc5LWJkOTItOWQxY2I0OTY0NTJkIl0sImV4cCI6MTc3MDMyNjE0NywiaWF0IjoxNzcwMTUyOTQ3LCJuYmYiOjE3NzAxNTI2NDcsInN1YiI6IjE0MDczMzQ1OCIsImFtciI6WyJIb3RtYXJ0Q3JlZGVudGlhbHNBdXRoZW50aWNhdGlvbkhhbmRsZXIiXSwiY2xpZW50X2lkIjoiOGNlZjM2MWItOTRmOC00Njc5LWJkOTItOWQxY2I0OTY0NTJkIiwiYXV0aF90aW1lIjoxNzcwMTUyOTQ1LCJzdGF0ZSI6IjhkZmY4ZWJlNzU5ZDQwN2M4MGYwOGJiODVmMDllMDQ1IiwiYXRfaGFzaCI6ImYyQjV1bVJScWpnWV9lRTI2MEU4MWciLCJhZGRyZXNzIjp7ImNvdW50cnkiOiJCcmFzaWwiLCJpZCI6MTU1ODc3MzU0fSwiYWRkcmVzc0NvdW50cnkiOiJCcmFzaWwiLCJhZGRyZXNzSWQiOjE1NTg3NzM1NCwiYXV0aG9yaXRpZXMiOlsidmVuZGVkb3IiLCJwcm9kdXRvciIsImNvbXByYWRvciIsIlBMQVRGT1JNX1NJR05VUCIsInVzZXJfYnIiXSwiY3VycmVuY3lDb2RlQ29taXNzaW9uIjoiVVNEIiwiZW1haWwiOiJjYWZlY29tY29kaWdvY29uc3VsdG9yaWFAZ21haWwuY29tIiwiaWQiOiIxNDA3MzM0NTgiLCJsb2NhbGUiOiJQVF9CUiIsImxvZ2luIjoiY2FmZWNvbWNvZGlnb2NvbnN1bHRvcmlhIiwibG9naW5BdHRlbXB0cyI6MCwibmFtZSI6IkFuZHLDqSBNZW5kZXMgTWFyY29uZGVzIiwic2lnbnVwRGF0ZSI6MTc3MDA2Njg5NzAwMCwic3RhdHVzIjoiQXRpdm8iLCJ1Y29kZSI6IjRkNDgyODk4LTQwYTUtNGU1MC1hM2MzLTVmNDRlNzFmNTJhYiIsInByZWZlcnJlZF91c2VybmFtZSI6IjE0MDczMzQ1OCIsInNjb3BlIjpbInVzZXIiLCJhdXRob3JpdGllcyIsImVtYWlsIiwib3BlbmlkIiwicHJvZmlsZSJdLCJhY2Nlc3NfdG9rZW4iOiJBVC0xMDk1MS03dktKWXpocWU0OFh5T3dzNDBsRUdSQVBYMllTcGJidyJ9.bgBagZApx5LQkPflVm-rH4i_jSl_53CsmZK5JcUdNTFDCZ16PKQ8Y-9cD0sAJwTjL4M3u6C6QMnc7SPND7u6Pmu6-zOqFikVcaI0ZFSD_NdGzfcKC5H_T4kvjqUD1bJV2QMrx26geVD7aLm8hEwgQJ67dr1AFRLXSNdTH9amVH1Wram_vwWMT1Z78CBiTiKeX0C0xjnvekrXGi3rCLIbBhfMTZwc0Y8_b90M8TNCoc13ZvB0qvn8CYZFu4pE_fxGONyp0tr15R-jv7dXk7DR4z4mv8a79wY82i5lnxgfBKUmBX6nKCzVAkeKm23D-noYPG68cS_BI6IfehIquNNrcA";
+        private static string EduzzToken => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NzAxNjg3ODYsImN1c3RvbWVyX2lkIjozODUyMjgxMiwiYWNjb3VudHNfaWQiOiI5NjE0MDkyNy02NjYyLTRiMmUtODY2MC1iZDUzNWM2MmYyNmEiLCJvcmlnaW5hbF9jdXN0b21lcl9pZCI6Mzg1MjI4MTIsIm9yaWdpbmFsX2N1c3RvbWVyX2FjY291bnRzX2lkIjoiOTYxNDA5MjctNjY2Mi00YjJlLTg2NjAtYmQ1MzVjNjJmMjZhIiwiaXNfc3VwcG9ydCI6ZmFsc2UsInN1cHBvcnRfaWQiOjB9.XfrMVqwGsIqM92uixkJYPdH8L5CqJ6Ec8XhpyHAQtSc";
+        private static string HotmartToken => "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJUR1QtNjAxNi1tNFk2d3hVS1Z3UHJ1LUVYTUVjTzk2WEVkZ29GVlY4cWliNWx0VGlqNHhVMVkwelo3QW1ZVkk0WlpaQkl0ck1nLVVvLWhvdC1zc28tN2I2NzQ5N2Y3Yy02NzQ0bSIsInNpZCI6ImYyZThjMmI4LWViZTctNGI4YS04MDhiLThmODJiMzRjMDM5YiIsImlzcyI6Imh0dHBzOi8vc3NvLmhvdG1hcnQuY29tL29pZGMiLCJhdWQiOlsiZmI1ZTE4YmEtMjAzZi0xMWVhLTk3OGYtMmU3MjhjZTg4MTI1IiwiOGNlZjM2MWItOTRmOC00Njc5LWJkOTItOWQxY2I0OTY0NTJkIl0sImV4cCI6MTc3MDMzOTUzMywiaWF0IjoxNzcwMTY2MzMzLCJuYmYiOjE3NzAxNjYwMzMsInN1YiI6IjE0MDczMzQ1OCIsImFtciI6WyJIb3RtYXJ0Q3JlZGVudGlhbHNBdXRoZW50aWNhdGlvbkhhbmRsZXIiXSwiY2xpZW50X2lkIjoiOGNlZjM2MWItOTRmOC00Njc5LWJkOTItOWQxY2I0OTY0NTJkIiwiYXV0aF90aW1lIjoxNzcwMTY2MzMwLCJzdGF0ZSI6ImE0OTdmNTQ4ZDlkMDRkMTI5Zjg5NmZjY2JmZjFjNGE3IiwiYXRfaGFzaCI6IjFHUl9sMnNLOE9iTXNPajJXdEtMRUEiLCJhZGRyZXNzIjp7ImNvdW50cnkiOiJCcmFzaWwiLCJpZCI6MTU1ODc3MzU0fSwiYWRkcmVzc0NvdW50cnkiOiJCcmFzaWwiLCJhZGRyZXNzSWQiOjE1NTg3NzM1NCwiYXV0aG9yaXRpZXMiOlsidmVuZGVkb3IiLCJwcm9kdXRvciIsImNvbXByYWRvciIsIlBMQVRGT1JNX1NJR05VUCIsInVzZXJfYnIiXSwiY3VycmVuY3lDb2RlQ29taXNzaW9uIjoiVVNEIiwiZW1haWwiOiJjYWZlY29tY29kaWdvY29uc3VsdG9yaWFAZ21haWwuY29tIiwiaWQiOiIxNDA3MzM0NTgiLCJsb2NhbGUiOiJQVF9CUiIsImxvZ2luIjoiY2FmZWNvbWNvZGlnb2NvbnN1bHRvcmlhIiwibG9naW5BdHRlbXB0cyI6MCwibmFtZSI6IkFuZHLDqSBNZW5kZXMgTWFyY29uZGVzIiwic2lnbnVwRGF0ZSI6MTc3MDA2Njg5NzAwMCwic3RhdHVzIjoiQXRpdm8iLCJ1Y29kZSI6IjRkNDgyODk4LTQwYTUtNGU1MC1hM2MzLTVmNDRlNzFmNTJhYiIsInByZWZlcnJlZF91c2VybmFtZSI6IjE0MDczMzQ1OCIsInNjb3BlIjpbInVzZXIiLCJhdXRob3JpdGllcyIsImVtYWlsIiwib3BlbmlkIiwicHJvZmlsZSJdLCJhY2Nlc3NfdG9rZW4iOiJBVC0yNDU0NS1FY1piMUR2R3VNNWRaU0I5T1o4eEhuNjZwUkpZTDVpQyJ9.vWQxvmBs2vjvV5O-tlzvqMm8Idh865hYtQZuAF38SZEDDLhOZQyeBlwSirf6rUYFdG-89Z-x9rZEBepGbwWejX0C3zl6UgGArwMWf1SGyvTZUHaCBo8ZM_sWVUbAQBs3GXxo63fP6VnhXbLqQl6vaQmjk27BzwaQW1Nlqq4X9UZe_ELxCWnwOlrqtZHQsUWgndycJIngCbUrj2_DXa1_UjJEZCcHb9kxWQd4PSDs-RfDW69EDbfFuZoQdp3ni0AfzX0SQCpXqxz1yXY97_B2sFOh0SPOMbYlxdTuyEa-Ye-op3Kryge3JzJXbD02c-2oI0gW_H2WZfFdaw52uVpFqw";
 
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -184,26 +184,71 @@ namespace PHE.Api.Controllers
 
         private HotmartProduct MapToHotmart(EduzzProduct source)
         {
+            var title = EnsureUniqueTitle(source.Title);
+            var priceValue = ParsePrice(source.Price);
+
             return new HotmartProduct
             {
                 ProductDetails = new HotmartProduct.ProductDetail
                 {
-                    Name = source.Title,
-                    Description = source.Description,
-                    CoverPhoto = new HotmartProduct.CoverPhoto { Id = 6238587 }
+                    Ucode = Guid.NewGuid().ToString(), 
+                    Name = title,
+                    Description = EnsureMinDescription(source.Description),
+                    ContentLocale = "PT_BR",
+                    TargetCountry = "1",
+                    Category = 2,
+                    GeneratedByAI = false,
+                    CoverPhoto = new HotmartProduct.CoverPhoto
+                    {
+                        Id = 6238587,
+                        Type = "image/png"
+                    },
+                    Format = new HotmartProduct.Format { Id = "1" }
                 },
                 OfferPayments = new HotmartProduct.OfferPayment
                 {
                     Warranty = source.RefundDays,
+                    PaymentMode = "PAY_IN_FULL",
+                    CheckoutConfiguration = new HotmartProduct.CheckoutConfiguration
+                    {
+                        VatValueEmbedded = false
+                    },
                     Detail = new HotmartProduct.PaymentDetail
                     {
                         Value = new HotmartProduct.PriceValue
                         {
-                            Value = decimal.Parse(source.Price)
-                        }
+                            CurrencyCode = "BRL",
+                            Value = priceValue
+                        },
+                        InstallmentCustomizationEnabled = false,
+                        DisableConversion = false,
+                        ActiveInstallments = [true],
+                        LotOffer = new object(),
+                        RecoveryWithSmartInstallments = false,
+                        SmartInstallmentTermsAgreed = false
                     }
                 }
             };
+        }
+
+        private static string EnsureMinDescription(string? description)
+        {
+            var normalized = description ?? string.Empty;
+            return normalized.Length >= 201 ? normalized : normalized.PadRight(201, '.');
+        }
+
+        private static decimal ParsePrice(string? price)
+        {
+            if (string.IsNullOrWhiteSpace(price))
+            {
+                return 0m;
+            }
+
+            return decimal.TryParse(price, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsed)
+                ? parsed
+                : decimal.TryParse(price, NumberStyles.Any, CultureInfo.GetCultureInfo("pt-BR"), out parsed)
+                    ? parsed
+                    : 0m;
         }
     }
 }
