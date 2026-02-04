@@ -1,0 +1,336 @@
+@page "/"
+@rendermode InteractiveServer
+@inject ProductApiClient ProductApiClient
+@inject IConfiguration Configuration
+@using System.Globalization
+
+<PageTitle>Product Copier</PageTitle>
+
+<section class="product-hero">
+    <h1>Product Copier</h1>
+    <p>Selecione um produto e copie para a plataforma uqe deseja</p>
+</section>
+
+@if (isLoading)
+{
+    <div class="product-status">Loading products...</div>
+}
+else if (!string.IsNullOrWhiteSpace(loadError))
+{
+    <div class="product-status error">Failed to load products: @loadError</div>
+}
+else
+{
+    <div class="product-grid">
+        <section class="product-panel eduzz">
+            <header class="panel-header">
+                <div class="panel-brand eduzz-brand">
+                    <span class="panel-logo" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" role="img" aria-hidden="true" focusable="false">
+                            <circle cx="32" cy="32" r="24" fill="#F8C73F" />
+                            <rect x="18" y="22" width="20" height="6" rx="3" fill="#ffffff" />
+                            <rect x="18" y="30" width="14" height="6" rx="3" fill="#ffffff" />
+                            <rect x="18" y="38" width="20" height="6" rx="3" fill="#ffffff" />
+                        </svg>
+                    </span>
+                    <span class="panel-brand-text">eduzz</span>
+                </div>
+                <h2>Eduzz</h2>
+                <span class="panel-subtitle">Pick a product to preview</span>
+            </header>
+
+            @if (eduzzProducts.Count == 0)
+            {
+                <div class="product-status">No Eduzz products found.</div>
+            }
+            else
+            {
+                <label class="product-label" for="eduzz-select">Eduzz products</label>
+                <InputSelect id="eduzz-select" class="product-select" @bind-Value="selectedEduzzId" @onchange="OnEduzzSelected">
+                    <option value="">Select a product...</option>
+                    @foreach (var product in eduzzProducts)
+                    {
+                        <option value="@product.Id">@product.Title</option>
+                    }
+                </InputSelect>
+            }
+
+            <div class="product-preview">
+                @if (SelectedEduzz is null)
+                {
+                    <div class="product-empty">Choose an Eduzz product to preview.</div>
+                }
+                else
+                {
+                    var imageUrl = GetEduzzImageUrl(SelectedEduzz);
+                    if (!string.IsNullOrWhiteSpace(imageUrl))
+                    {
+                        <img class="product-image" src="@imageUrl" alt="@SelectedEduzz.Title" />
+                    }
+                    else
+                    {
+                        <div class="product-image placeholder">No image</div>
+                    }
+                    <div class="product-name">@SelectedEduzz.Title</div>
+                }
+            </div>
+        </section>
+
+        <section class="product-actions">
+            @if (SelectedHotmart is not null)
+            {
+                <button class="action-button left" type="button" @onclick="CopyToEduzzAsync" disabled="@isMigrating">← Copy to Eduzz</button>
+            }
+
+            @if (SelectedEduzz is not null)
+            {
+                <button class="action-button right" type="button" @onclick="CopyToHotmartAsync" disabled="@isMigrating">Copy to Hotmart →</button>
+            }
+
+            @if (SelectedEduzz is null && SelectedHotmart is null)
+            {
+                <div class="action-hint">Select a product to enable copy.</div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(migrationMessage))
+            {
+                <div class="action-status">@migrationMessage</div>
+            }
+        </section>
+
+        <section class="product-panel hotmart">
+            <header class="panel-header">
+                <div class="panel-brand hotmart-brand">
+                    <span class="panel-logo" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" role="img" aria-hidden="true" focusable="false">
+                            <path d="M32 8c10 10 15 19 15 28 0 12-7 20-15 20S17 48 17 36c0-9 5-18 15-28z" fill="#F15A24" />
+                            <circle cx="32" cy="38" r="7" fill="#1f1f1f" />
+                        </svg>
+                    </span>
+                    <span class="panel-brand-text">hotmart</span>
+                </div>
+                <h2>Hotmart</h2>
+                <span class="panel-subtitle">Pick a product to preview</span>
+            </header>
+
+            @if (hotmartProducts.Count == 0)
+            {
+                <div class="product-status">No Hotmart products found.</div>
+            }
+            else
+            {
+                <label class="product-label" for="hotmart-select">Hotmart products</label>
+                <InputSelect id="hotmart-select" class="product-select" @bind-Value="selectedHotmartId" @onchange="OnHotmartSelected">
+                    <option value="">Select a product...</option>
+                    @foreach (var product in hotmartProducts)
+                    {
+                        <option value="@product.Id">@product.Name</option>
+                    }
+                </InputSelect>
+            }
+
+            <div class="product-preview">
+                @if (SelectedHotmart is null)
+                {
+                    <div class="product-empty">Choose a Hotmart product to preview.</div>
+                }
+                else
+                {
+                    var imageUrl = GetHotmartImageUrl(SelectedHotmart);
+                    if (!string.IsNullOrWhiteSpace(imageUrl))
+                    {
+                        <img class="product-image" src="@imageUrl" alt="@SelectedHotmart.Name" />
+                    }
+                    else
+                    {
+                        <div class="product-image placeholder">No image</div>
+                    }
+                    <div class="product-name">@SelectedHotmart.Name</div>
+                }
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    private bool isLoading = true;
+    private string? loadError;
+    private bool isMigrating;
+    private string? migrationMessage;
+    private List<EduzzProductDTO> eduzzProducts = [];
+    private List<HotmartProductDetails> hotmartProducts = [];
+    private long? selectedEduzzId;
+    private long? selectedHotmartId;
+
+    private EduzzProductDTO? SelectedEduzz =>
+        selectedEduzzId is not null
+            ? eduzzProducts.FirstOrDefault(product => product.Id == selectedEduzzId)
+            : null;
+
+    private HotmartProductDetails? SelectedHotmart =>
+        selectedHotmartId is not null
+            ? hotmartProducts.FirstOrDefault(product => product.Id == selectedHotmartId.Value)
+            : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var eduzzTask = ProductApiClient.GetEduzzProductsAsync();
+            var hotmartTask = ProductApiClient.GetHotmartProductsAsync();
+
+            await Task.WhenAll(eduzzTask, hotmartTask);
+            eduzzProducts = eduzzTask.Result;
+            hotmartProducts = hotmartTask.Result;
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private static string? GetEduzzImageUrl(EduzzProductDTO product)
+    {
+        if (string.IsNullOrWhiteSpace(product.Image))
+        {
+            return null;
+        }
+
+        return Uri.TryCreate(product.Image, UriKind.Absolute, out var uri) ? uri.ToString() : null;
+    }
+
+    private static string? GetHotmartImageUrl(HotmartProductDetails product)
+    {
+        if (string.IsNullOrWhiteSpace(product.UrlCoverPhoto))
+        {
+            return null;
+        }
+
+        return Uri.TryCreate(product.UrlCoverPhoto, UriKind.Absolute, out var uri) ? uri.ToString() : null;
+    }
+
+    private string? EduzzToken => Configuration["Api:EduzzToken"];
+    private string? HotmartToken => Configuration["Api:HotmartToken"];
+
+    private async Task CopyToEduzzAsync()
+    {
+        if (SelectedHotmart is null)
+        {
+            return;
+        }
+
+        isMigrating = true;
+        migrationMessage = "Sending Hotmart product to Eduzz...";
+
+        try
+        {
+            var payload = MapToHotmartDomain(SelectedHotmart);
+            var response = await ProductApiClient.MigrateToEduzzAsync(payload);
+            var body = await response.Content.ReadAsStringAsync();
+            migrationMessage = response.IsSuccessStatusCode
+                ? "Eduzz migration done."
+                : $"Eduzz migration failed: {body}";
+        }
+        catch (Exception ex)
+        {
+            migrationMessage = $"Eduzz migration error: {ex.Message}";
+        }
+        finally
+        {
+            isMigrating = false;
+        }
+    }
+
+    private async Task CopyToHotmartAsync()
+    {
+        if (SelectedEduzz is null)
+        {
+            return;
+        }
+
+        isMigrating = true;
+        migrationMessage = "Sending Eduzz product to Hotmart...";
+
+        try
+        {
+            var payload = MapToEduzzDomain(SelectedEduzz);
+            var response = await ProductApiClient.MigrateToHotmartAsync(payload);
+            var body = await response.Content.ReadAsStringAsync();
+            migrationMessage = response.IsSuccessStatusCode
+                ? "Hotmart migration done."
+                : $"Hotmart migration failed: {body}";
+        }
+        catch (Exception ex)
+        {
+            migrationMessage = $"Hotmart migration error: {ex.Message}";
+        }
+        finally
+        {
+            isMigrating = false;
+        }
+    }
+
+    private static EduzzProduct MapToEduzzDomain(EduzzProductDTO product)
+    {
+        var title = string.IsNullOrWhiteSpace(product.Title) ? "eduzz-product" : product.Title.Trim();
+        var friendlyName = new string(title.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(friendlyName))
+        {
+            friendlyName = "eduzz-product";
+        }
+
+        return new EduzzProduct
+        {
+            Title = title,
+            Description = product.Description ?? string.Empty,
+            FriendlyName = friendlyName,
+            Price = product.Price.ToString("F2", CultureInfo.InvariantCulture),
+            RefundDays = 7,
+            SupportEmail = "support@poc.local"
+        };
+    }
+
+    private static HotmartProduct MapToHotmartDomain(HotmartProductDetails product)
+    {
+        var name = string.IsNullOrWhiteSpace(product.Name) ? "hotmart-product" : product.Name.Trim();
+        var description = product.Description ?? string.Empty;
+
+        return new HotmartProduct
+        {
+            ProductDetails = new HotmartProduct.ProductDetail
+            {
+                Name = name,
+                Description = description,
+                CoverPhoto = new HotmartProduct.CoverPhoto { Id = 6238587 },
+                Format = new HotmartProduct.Format { Id = "1" }
+            },
+            OfferPayments = new HotmartProduct.OfferPayment
+            {
+                Warranty = product.Warranty,
+                PaymentMode = "PAY_IN_FULL",
+                Detail = new HotmartProduct.PaymentDetail
+                {
+                    Value = new HotmartProduct.PriceValue
+                    {
+                        CurrencyCode = product.Price?.CurrencyCode ?? "BRL",
+                        Value = product.Price?.Value ?? 0m
+                    }
+                }
+            }
+        };
+    }
+
+    private void OnEduzzSelected(ChangeEventArgs args)
+    {
+        Console.WriteLine($"Eduzz select changed: {args.Value}");
+    }
+
+    private void OnHotmartSelected(ChangeEventArgs args)
+    {
+        Console.WriteLine($"Hotmart select changed: {args.Value}");
+    }
+}

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="PHE.Api/PHE.Api.csproj" />
+  <Project Path="PHE.Blazor/PHE.Blazor.csproj" />
   <Project Path="PHE.Domain/PHE.Domain.csproj" />
 </Solution>

@@ -8,7 +8,7 @@ namespace PHE.Domain.DTO
         public bool Success { get; set; }
 
         [JsonPropertyName("data")]
-        public List<EduzzProduct> Data { get; set; } = [];
+        public List<EduzzProductDTO> Data { get; set; } = [];
 
         [JsonPropertyName("pagination")]
         public EduzzPagination? Pagination { get; set; }
@@ -17,7 +17,7 @@ namespace PHE.Domain.DTO
         public EduzzProfiler? Profiler { get; set; }
     }
 
-    public sealed class EduzzProduct
+    public sealed class EduzzProductDTO
     {
         [JsonPropertyName("id")]
         public long Id { get; set; }
